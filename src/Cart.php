@@ -1,16 +1,16 @@
 <?php
 
-namespace Gloudemans\Shoppingcart;
+namespace Onweb\Shoppingcart;
 
 use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Session\SessionManager;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Contracts\Events\Dispatcher;
-use Gloudemans\Shoppingcart\Contracts\Buyable;
-use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
-use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
-use Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException;
+use Onweb\Shoppingcart\Contracts\Buyable;
+use Onweb\Shoppingcart\Exceptions\UnknownModelException;
+use Onweb\Shoppingcart\Exceptions\InvalidRowIDException;
+use Onweb\Shoppingcart\Exceptions\CartAlreadyStoredException;
 
 class Cart
 {
@@ -55,7 +55,7 @@ class Cart
      * Set the current cart instance.
      *
      * @param string|null $instance
-     * @return \Gloudemans\Shoppingcart\Cart
+     * @return \Onweb\Shoppingcart\Cart
      */
     public function instance($instance = null)
     {
@@ -84,7 +84,7 @@ class Cart
      * @param int|float $qty
      * @param float     $price
      * @param array     $options
-     * @return \Gloudemans\Shoppingcart\CartItem
+     * @return \Onweb\Shoppingcart\CartItem
      */
     public function add($id, $name = null, $qty = null, $price = null, array $options = [])
     {
@@ -116,7 +116,7 @@ class Cart
      *
      * @param string $rowId
      * @param mixed  $qty
-     * @return \Gloudemans\Shoppingcart\CartItem
+     * @return \Onweb\Shoppingcart\CartItem
      */
     public function update($rowId, $qty)
     {
@@ -178,7 +178,7 @@ class Cart
      * Get a cart item from the cart by its rowId.
      *
      * @param string $rowId
-     * @return \Gloudemans\Shoppingcart\CartItem
+     * @return \Onweb\Shoppingcart\CartItem
      */
     public function get($rowId)
     {
@@ -227,7 +227,7 @@ class Cart
     }
 
     /**
-     * Get the total price of the items in the cart.
+     * Get the formatted total price of the items in the cart.
      *
      * @param int    $decimals
      * @param string $decimalPoint
@@ -236,13 +236,25 @@ class Cart
      */
     public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
-        $content = $this->getContent();
+        $total = $this->totalPrice();
+
+        return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
+     * Get the total price of the items in the cart.
+     * @param Closure|null $filter
+     * @return float
+     */
+    public function totalPrice($filter = null)
+    {
+        $content = $filter instanceof Closure ? $this->search($filter) : $this->getContent();
 
         $total = $content->reduce(function ($total, CartItem $cartItem) {
             return $total + ($cartItem->qty * $cartItem->priceTax);
         }, 0);
 
-        return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
+        return $total;
     }
 
     /**
@@ -445,7 +457,7 @@ class Cart
      * @param int|float $qty
      * @param float     $price
      * @param array     $options
-     * @return \Gloudemans\Shoppingcart\CartItem
+     * @return \Onweb\Shoppingcart\CartItem
      */
     private function createCartItem($id, $name, $qty, $price, array $options)
     {
