@@ -22,17 +22,24 @@ class BuyableProduct implements Buyable
     private $price;
 
     /**
+     * @var int
+     */
+    private $tax;
+
+    /**
      * BuyableProduct constructor.
      *
      * @param int|string $id
-     * @param string     $name
-     * @param float      $price
+     * @param string $name
+     * @param float $price
+     * @param int $tax
      */
-    public function __construct($id = 1, $name = 'Item name', $price = 10.00)
+    public function __construct($id = 1, $name = 'Item name', $price = 10.00, $tax = 25)
     {
         $this->id = $id;
         $this->name = $name;
         $this->price = $price;
+        $this->tax = $tax;
     }
 
     /**
@@ -63,5 +70,15 @@ class BuyableProduct implements Buyable
     public function getBuyablePrice($options = null)
     {
         return $this->price;
+    }
+
+    /**
+     * Get the tax rate of the Buyable item.
+     *
+     * @return int
+     */
+    public function getTaxRate($options = null)
+    {
+        return $this->tax;
     }
 }

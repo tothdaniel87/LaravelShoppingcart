@@ -24,5 +24,9 @@ Add a new line to the `providers` array:
 And optionally add a new line to the `aliases` array:
 
 	'Cart' => Onweb\Shoppingcart\Facades\Cart::class,
+	
+Publish config:
+
+    php artisan vendor:publish --provider="Onweb\Shoppingcart\ShoppingcartServiceProvider" --tag="config"
 
 Now you're ready to start using the shoppingcart in your application.

@@ -40,4 +40,16 @@ trait CanBeBought
 
         return null;
     }
+
+    /**
+     * Get the tax rate of the Buyable item.
+     *
+     * @return int
+     */
+    public function getTaxRate($options = null)
+    {
+        if (property_exists($this, 'tax')) return $this->tax;
+
+        return null;
+    }
 }
